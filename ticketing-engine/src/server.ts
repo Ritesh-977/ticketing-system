@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 3000;
 
 // Security and Parsing Middleware
 app.use(helmet()); // Secures HTTP headers
-const allowedOrigins = ['https://ticketing-system-virid.vercel.app', 'http://localhost:5173'];
+const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',') : ['http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
