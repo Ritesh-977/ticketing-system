@@ -165,11 +165,12 @@ export function ApiKeyManager() {
     const borderColor = isTest ? 'border-orange-100' : 'border-slate-200';
 
     return (
-      <div className={`overflow-visible rounded-xl border ${borderColor} bg-white shadow-sm animate-fade-in-up mb-8`}>
+      <div className={`overflow-hidden rounded-xl border ${borderColor} bg-white shadow-sm animate-fade-in-up mb-8`}>
         <div className={`px-5 py-4 border-b ${borderColor} ${bgHeader}`}>
           <h3 className={`font-semibold ${textColor}`}>{title}</h3>
         </div>
-        <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm min-w-[600px]">
           <thead>
             <tr className="border-b border-slate-100">
               <th className="px-5 py-3 font-medium text-slate-500">NAME</th>
@@ -227,6 +228,7 @@ export function ApiKeyManager() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     );
   };
@@ -237,7 +239,7 @@ export function ApiKeyManager() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
             <KeyRound className="h-5 w-5 text-slate-600" />

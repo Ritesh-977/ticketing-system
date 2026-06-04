@@ -83,7 +83,8 @@ export function InvoiceHistory() {
       </div>
 
       {/* Table */}
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[600px]">
         <thead>
           <tr className="border-b border-slate-100 text-left">
             <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-400">
@@ -134,6 +135,7 @@ export function InvoiceHistory() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   LayoutDashboard,
   KeyRound,
@@ -5,6 +6,8 @@ import {
   BarChart3,
   Zap,
   LogOut,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext.js';
 import { useAuth } from '../../context/AuthContext.js';
@@ -30,9 +33,15 @@ const navItems: NavItem[] = [
 export function Sidebar() {
   const { activePage, setActivePage, environment, toggleEnvironment } = useDashboard();
   const { logout, tenant } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <aside className="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white">
+  const handleNavClick = (page: ActivePage) => {
+    setActivePage(page);
+    setMobileOpen(false); // close on mobile after navigating
+  };
+
+  const sidebarContent = (
+    <>
       {/* ── Brand ─────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2.5 border-b border-slate-100 px-5 py-5">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900">
@@ -54,7 +63,7 @@ export function Sidebar() {
           return (
             <button
               key={item.id}
-              onClick={() => setActivePage(item.id)}
+              onClick={() => handleNavClick(item.id)}
               className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                 isActive
                   ? 'bg-brand-50 text-brand-700'
@@ -116,6 +125,45 @@ export function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── Mobile hamburger button ───────────────────────────────────── */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-white border border-slate-200 shadow-sm text-slate-600 lg:hidden"
+        aria-label="Open menu"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
+      {/* ── Mobile overlay ────────────────────────────────────────────── */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden animate-overlay-in"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* ── Sidebar panel ─────────────────────────────────────────────── */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Mobile close button */}
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="absolute right-3 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

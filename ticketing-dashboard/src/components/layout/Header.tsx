@@ -18,17 +18,18 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-lg">
-      <div className="flex items-center justify-between px-8 py-5">
+      <div className="flex items-center justify-between px-4 py-4 sm:px-6 md:px-8 md:py-5">
         {/* ── Title ─────────────────────────────────────────────────────── */}
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+        {/* Left padding on mobile to leave space for the hamburger button */}
+        <div className="pl-12 lg:pl-0">
+          <h1 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
             {page.title}
           </h1>
-          <p className="text-sm text-slate-400">{page.subtitle}</p>
+          <p className="hidden text-sm text-slate-400 sm:block">{page.subtitle}</p>
         </div>
 
         {/* ── Environment Toggle ────────────────────────────────────────── */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <span
             className={`text-xs font-medium transition-colors ${
               environment === 'test' ? 'text-amber-600' : 'text-slate-400'

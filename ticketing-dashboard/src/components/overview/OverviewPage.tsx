@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   KeyRound,
   Webhook,
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext.js';
 import { useApiUsage } from '../../hooks/useApiUsage.js';
+import api from '../../lib/axios.js';
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
@@ -69,30 +71,50 @@ function QuickAction({ title, description, icon: Icon, onClick }: QuickActionPro
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function OverviewPage() {
-  const { apiKeys, setActivePage } = useDashboard();
+  const { setActivePage } = useDashboard();
   const { totalRequests } = useApiUsage();
+  const [activeWebhooksCount, setActiveWebhooksCount] = useState<number>(0);
+  const [activeKeysCount, setActiveKeysCount] = useState<number>(0);
 
-  const activeKeys = apiKeys.filter((k) => k.status === 'active').length;
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const [webhooksRes, keysRes] = await Promise.all([
+          api.get('/webhooks'),
+          api.get('/tenants/keys')
+        ]);
+        
+        const webhooksCount = webhooksRes.data?.webhooks?.filter((w: any) => w.is_active).length || 0;
+        const keysCount = keysRes.data?.keys?.length || 0;
+        
+        setActiveWebhooksCount(webhooksCount);
+        setActiveKeysCount(keysCount);
+      } catch (err) {
+        console.error('Failed to fetch counts for overview', err);
+      }
+    }
+    fetchCounts();
+  }, []);
 
   return (
     <div className="space-y-8">
       {/* ── Stats Grid ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 sm:gap-5">
         <StatCard
           label="Active API Keys"
-          value={String(activeKeys)}
+          value={String(activeKeysCount)}
           icon={KeyRound}
           color="bg-brand-50 text-brand-600"
         />
         <StatCard
-          label="API Calls (all time)"
+          label="API Calls (last 7 days)"
           value={totalRequests.toLocaleString()}
           icon={BarChart3}
           color="bg-emerald-50 text-emerald-600"
         />
         <StatCard
           label="Active Webhooks"
-          value="3"
+          value={String(activeWebhooksCount)}
           icon={Webhook}
           color="bg-sky-50 text-sky-600"
         />
@@ -103,7 +125,7 @@ export function OverviewPage() {
         <h3 className="mb-3 text-sm font-semibold text-slate-900">
           Quick Actions
         </h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <QuickAction
             title="Create API Key"
             description="Generate a new key pair for your application"

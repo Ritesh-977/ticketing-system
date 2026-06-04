@@ -86,7 +86,8 @@ export function WebhookLogs() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm min-w-[650px]">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/50">
               <th className="w-10 px-4 py-3"></th>
@@ -160,6 +161,7 @@ export function WebhookLogs() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

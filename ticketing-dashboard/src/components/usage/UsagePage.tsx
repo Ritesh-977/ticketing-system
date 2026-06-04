@@ -36,7 +36,7 @@ export function UsagePage() {
   return (
     <div className="space-y-6">
       {/* ── Page Header ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100">
             <BarChart3 className="h-5 w-5 text-emerald-600" />
@@ -152,7 +152,8 @@ export function UsagePage() {
                 <p className="text-sm font-semibold text-slate-900">Daily Usage History (Last 7 Days)</p>
                 <p className="mt-0.5 text-xs text-slate-400">API consumption by day</p>
               </div>
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[500px]">
                 <thead>
                   <tr className="border-b border-slate-100 text-left">
                     <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-400">Date</th>
@@ -195,12 +196,13 @@ export function UsagePage() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 
           {/* ── Plan Card ──────────────────────────────────────────── */}
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between p-6">
+          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50">
                   <Zap className="h-6 w-6 text-brand-600" />
@@ -220,8 +222,8 @@ export function UsagePage() {
               </button>
             </div>
 
-            <div className="border-t border-slate-100 px-6 py-4">
-              <div className="grid grid-cols-3 gap-6 text-sm">
+            <div className="border-t border-slate-100 px-5 py-4 sm:px-6">
+              <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-3 sm:gap-6">
                 <div>
                   <p className="text-slate-400">Monthly cost</p>
                   <p className="mt-0.5 font-semibold text-slate-900">$49/mo</p>
