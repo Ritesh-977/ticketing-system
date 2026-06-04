@@ -29,7 +29,17 @@ const PORT = process.env.PORT || 3000;
 
 // Security and Parsing Middleware
 app.use(helmet()); // Secures HTTP headers
-app.use(cors()); // Allows cross-origin requests
+const allowedOrigins = ['https://ticketing-system-virid.vercel.app', 'http://localhost:5173'];
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+})); // Allows cross-origin requests
 app.use(express.json()); // Parses incoming JSON payloads
 
 // Register API Routes

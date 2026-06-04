@@ -19,7 +19,7 @@ interface TicketingProviderProps {
 // 4. The actual Provider Component
 export const TicketingProvider: React.FC<TicketingProviderProps> = ({
     publishableKey,
-    apiUrl = 'http://localhost:3000/api/public',
+    apiUrl = 'https://ticketing-system-0s90.onrender.com/api/public',
     children
 }) => {
 

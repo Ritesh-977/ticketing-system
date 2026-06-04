@@ -23,7 +23,7 @@ export function CreateKeyModal() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/tenants/keys', {
+      const response = await fetch('https://ticketing-system-0s90.onrender.com/api/tenants/keys', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
