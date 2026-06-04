@@ -60,6 +60,7 @@ export function useApiUsage() {
           setUsage(data.usage);
           setChartData(data.chart_data);
         }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         if (!cancelled) {
           setError(err.response?.data?.error ?? 'Failed to fetch usage data');

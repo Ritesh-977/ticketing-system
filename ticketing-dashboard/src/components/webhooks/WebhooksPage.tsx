@@ -117,6 +117,7 @@ export function WebhooksPage() {
   }, [pushToast]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchWebhooks();
   }, [fetchWebhooks]);
 
@@ -144,7 +145,11 @@ export function WebhooksPage() {
   const toggleEvent = (id: string): void => {
     setSelectedEvents((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -186,7 +191,11 @@ export function WebhooksPage() {
   const toggleReveal = (id: string): void => {
     setRevealedSecrets((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

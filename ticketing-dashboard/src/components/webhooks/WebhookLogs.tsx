@@ -5,7 +5,7 @@ import api from '../../lib/axios.js';
 interface WebhookDelivery {
   id: string;
   endpoint_url: string;
-  payload: any;
+  payload: unknown;
   status: 'PENDING' | 'SUCCESS' | 'FAILED';
   attempts: number;
   next_retry_at: string | null;
@@ -16,10 +16,6 @@ export function WebhookLogs() {
   const [deliveries, setDeliveries] = useState<WebhookDelivery[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchDeliveries();
-  }, []);
 
   const fetchDeliveries = async () => {
     try {
@@ -32,6 +28,11 @@ export function WebhookLogs() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDeliveries();
+  }, []);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A';

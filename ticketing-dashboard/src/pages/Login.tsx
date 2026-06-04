@@ -34,6 +34,7 @@ export function Login() {
 
       login(data.token, data.tenant);
       navigate(from, { replace: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -33,6 +33,7 @@ export function Register() {
 
       login(data.token, data.tenant);
       navigate('/dashboard');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
     } finally {

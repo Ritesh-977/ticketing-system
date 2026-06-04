@@ -46,6 +46,7 @@ export function ApiKeyManager() {
     const fetchKeys = async () => {
       try {
         const response = await api.get('/tenants/keys');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formattedKeys = response.data.keys.map((k: any) => ({
           id: k.id,
           name: k.name || 'API Key',
@@ -137,7 +138,7 @@ export function ApiKeyManager() {
 
   // ─── Sub-components ─────────────────────────────────────────────────────────
 
-  const EmptyState = () => (
+  const renderEmptyState = () => (
     <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-white px-8 py-16 text-center animate-fade-in-up">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50">
         <ShieldCheck className="h-8 w-8 text-slate-400" />
@@ -156,7 +157,7 @@ export function ApiKeyManager() {
     </div>
   );
 
-  const KeyTable = ({ keys, title, isTest = false }: { keys: ApiKey[], title: string, isTest?: boolean }) => {
+  const renderKeyTable = ({ keys, title, isTest = false }: { keys: ApiKey[], title: string, isTest?: boolean }) => {
     if (keys.length === 0) return null;
 
     const bgHeader = isTest ? 'bg-orange-50/60' : 'bg-slate-50/60';
@@ -259,11 +260,11 @@ export function ApiKeyManager() {
 
       {/* Content */}
       {keys.length === 0 ? (
-        <EmptyState />
+        renderEmptyState()
       ) : (
         <>
-          <KeyTable keys={liveKeys} title="Live Keys" />
-          <KeyTable keys={testKeys} title="Test Keys" isTest={true} />
+          {renderKeyTable({ keys: liveKeys, title: "Live Keys" })}
+          {renderKeyTable({ keys: testKeys, title: "Test Keys", isTest: true })}
         </>
       )}
 
