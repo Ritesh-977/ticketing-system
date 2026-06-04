@@ -8,8 +8,7 @@ export type ActivePage =
   | 'overview'
   | 'api-keys'
   | 'webhooks'
-  | 'usage'
-  | 'team';
+  | 'usage';
 
 // ─── API Key ──────────────────────────────────────────────────────────────────
 

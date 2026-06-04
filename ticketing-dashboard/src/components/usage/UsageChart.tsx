@@ -6,7 +6,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  type TooltipProps,
 } from 'recharts';
 import type { ChartDataPoint } from '../../hooks/useApiUsage';
 
@@ -44,7 +43,7 @@ function withTestData(data: ChartDataPoint[]): ChartDataPoint[] {
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
 
-function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
 
   return (

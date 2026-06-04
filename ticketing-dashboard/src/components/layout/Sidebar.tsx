@@ -3,7 +3,6 @@ import {
   KeyRound,
   Webhook,
   BarChart3,
-  Users,
   Zap,
   LogOut,
 } from 'lucide-react';
