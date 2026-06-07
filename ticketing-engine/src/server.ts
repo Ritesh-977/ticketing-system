@@ -1,7 +1,9 @@
+import http from 'http';
 import express, { type Application, type Request, type Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import { initSocketServer } from './sockets/socketServer.js';
 
 import './config/database.js';
 import './config/redis.js';
@@ -27,9 +29,12 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
+// Create a raw HTTP server so that Socket.io can share the same port as Express
+const httpServer = http.createServer(app);
+
 // Security and Parsing Middleware
 app.use(helmet()); // Secures HTTP headers
-const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',') : ['http://localhost:5173'];
+const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',').map(o => o.trim()) : ['http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -40,6 +45,9 @@ app.use(cors({
     },
     credentials: true,
 })); // Allows cross-origin requests
+
+// Attach Socket.io to the shared HTTP server (must be after CORS is configured)
+initSocketServer(httpServer, allowedOrigins);
 app.use(express.json()); // Parses incoming JSON payloads
 
 // Register API Routes
@@ -62,10 +70,11 @@ app.get('/health', (req: Request, res: Response) => {
 // Initialize Swagger Documentation UI
 setupSwagger(app);
 
-// Start the server
-app.listen(PORT, async () => {
+// Start the HTTP server (Express + Socket.io share the same port)
+httpServer.listen(PORT, async () => {
     console.log(`🚀 API Gateway is running on http://localhost:${PORT}`);
     console.log(`📚 Swagger Docs available at http://localhost:${PORT}/api-docs`);
+    console.log(`🔌 WebSocket server is available on ws://localhost:${PORT}`);
 
     // Initialize RabbitMQ and start the background worker
     await mq.connect();

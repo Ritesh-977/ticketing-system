@@ -27,6 +27,7 @@
     "node-cron": "^4.2.1",
     "node-pg-migrate": "^8.0.4",
     "pg": "^8.21.0",
+    "socket.io": "^4.8.3",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
   },
