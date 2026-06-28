@@ -8,20 +8,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     const { eventId } = req.params;
     const tenantId = req.tenant?.id;
 
-    // 1. Define the unique lock key for THIS specific event
-    const lockKey = `lock:event:${eventId}`;
-    let lockValue: string | null = null;
-
     try {
-        // 2. Attempt to acquire the Redis lock (Wait up to 3 seconds before timing out)
-        lockValue = await acquireLock(lockKey, 3000);
-
-        if (!lockValue) {
-            // If we can't get the lock, it means thousands of people are buying at this exact second.
-            res.status(429).json({ error: 'High traffic detected. Please try again in a moment.' });
-            return;
-        }
-
         // 3. Start a PostgreSQL Transaction
         await db.query('BEGIN');
 
@@ -103,9 +90,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         console.error('Checkout Error:', error);
         res.status(500).json({ error: 'Internal server error during checkout.' });
     } finally {
-        // 8. Always release the lock, whether the order succeeded or failed
-        if (lockValue) {
-            await releaseLock(lockKey, lockValue);
-        }
+        // No manual lock release needed, PostgreSQL handles releasing the FOR UPDATE lock automatically when the transaction COMMITS or ROLLS BACK!
     }
 };

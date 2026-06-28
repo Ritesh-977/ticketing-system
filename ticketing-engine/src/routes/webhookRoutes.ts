@@ -1,5 +1,5 @@
 import express from 'express';
-import { createWebhook, listWebhooks, listDeliveries } from '../controllers/webhookController.js';
+import { createWebhook, listWebhooks, listDeliveries, deleteWebhook } from '../controllers/webhookController.js';
 import { requireAuth } from '../middleware/jwtMiddleware.js';
 
 const router = express.Router();
@@ -89,5 +89,30 @@ router.get('/', listWebhooks);
  *         description: Internal server error
  */
 router.get('/deliveries', listDeliveries);
+
+/**
+ * @openapi
+ * /api/webhooks/{id}:
+ *   delete:
+ *     tags:
+ *       - Webhooks
+ *     summary: Delete a webhook endpoint
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted webhook
+ *       404:
+ *         description: Webhook not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete('/:id', deleteWebhook);
 
 export default router;

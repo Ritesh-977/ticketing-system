@@ -224,3 +224,48 @@ export const listDeliveries = async (
         res.status(500).json({ error: 'Internal server error while fetching webhook deliveries.' });
     }
 };
+
+/**
+ * DELETE /api/webhooks/:id
+ *
+ * Deletes a webhook endpoint for the authenticated tenant.
+ */
+export const deleteWebhook = async (
+    req: Request,
+    res: Response<{ message: string } | ErrorResponse>
+): Promise<void> => {
+    const tenantId: string | undefined = req.tenant?.id;
+    const { id } = req.params;
+
+    if (!tenantId) {
+        res.status(401).json({ error: 'Unauthorized: Tenant identity not found on request.' });
+        return;
+    }
+
+    if (!id) {
+        res.status(400).json({ error: 'Webhook ID is required.' });
+        return;
+    }
+
+    try {
+        const query = `
+            DELETE FROM webhooks
+            WHERE id = $1 AND tenant_id = $2 AND is_live = $3
+            RETURNING id;
+        `;
+
+        const result = await db.query(query, [id, tenantId, req.isLive]);
+
+        if (result.rowCount === 0) {
+            res.status(404).json({ error: 'Webhook not found.' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Webhook deleted successfully.' });
+    } catch (error: unknown) {
+        const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error deleting webhook:', errorMessage);
+
+        res.status(500).json({ error: 'Internal server error while deleting webhook.' });
+    }
+};

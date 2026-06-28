@@ -4,22 +4,30 @@ import crypto from 'crypto';
 /**
  * Attempts to acquire an exclusive lock in Redis.
  * @param lockKey The unique name of the lock (e.g., "lock:event:123")
+ * @param waitMs How long to keep trying to get the lock (polling) before giving up
  * @param ttlMs How long before the lock auto-expires (Safety net so locks don't get stuck forever)
  * @returns A unique lock value if successful, or null if the lock is busy.
  */
-export const acquireLock = async (lockKey: string, ttlMs: number = 5000): Promise<string | null> => {
+export const acquireLock = async (lockKey: string, waitMs: number = 3000, ttlMs: number = 5000): Promise<string | null> => {
     // Generate a random ID for THIS specific lock request
     const lockValue = crypto.randomBytes(16).toString('hex');
+    const startTime = Date.now();
 
-    // NX = Only set the key if it does NOT already exist
-    // PX = Set an auto-expiration in milliseconds
-    const result = await redis.set(lockKey, lockValue, 'PX', ttlMs, 'NX');
+    // Loop until we either get the lock or run out of time (waitMs)
+    while (Date.now() - startTime < waitMs) {
+        // NX = Only set the key if it does NOT already exist
+        // PX = Set an auto-expiration in milliseconds
+        const result = await redis.set(lockKey, lockValue, 'PX', ttlMs, 'NX');
 
-    if (result === 'OK') {
-        return lockValue; // We successfully grabbed the lock!
+        if (result === 'OK') {
+            return lockValue; // We successfully grabbed the lock!
+        }
+
+        // Lock is busy! Wait 50 milliseconds before polling again
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
 
-    return null; // Someone else already has the lock.
+    return null; // Someone else held the lock for the entire wait duration.
 };
 
 /**

@@ -15,13 +15,14 @@ import publicRoutes from './routes/publicRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import webhookRoutes from './routes/webhookRoutes.js';
 import billingRoutes from './routes/billingRoutes.js';
+import ticketRoutes from './routes/ticketRoutes.js';
 import { setupSwagger } from './config/swagger.js';
 import { mq } from './config/rabbitmq.js';
 import { startNotificationWorker } from './workers/notificationWorker.js';
 import { startBillingCron } from './workers/billingCron.js';
 import { initRabbitMQ } from './services/webhookQueue.js';
 import { startWebhookWorker } from './workers/webhookWorker.js';
-
+import { startTicketWorker } from './workers/ticketWorker.js';
 
 // Load environment variables
 dotenv.config();
@@ -50,13 +51,17 @@ app.use(cors({
 initSocketServer(httpServer, allowedOrigins);
 app.use(express.json()); // Parses incoming JSON payloads
 
+import { createTestEvent } from './controllers/testController.js';
+
 // Register API Routes
+app.post('/api/test-setup', createTestEvent);
 app.use('/api/tenants', tenantRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/v1/tickets', ticketRoutes);
 
 // Health Check Endpoint (To verify the server is alive)
 app.get('/health', (req: Request, res: Response) => {
@@ -81,5 +86,6 @@ httpServer.listen(PORT, async () => {
     await initRabbitMQ(); // New Webhooks RabbitMQ
     startNotificationWorker();
     startWebhookWorker(); // New Webhook Worker
+    startTicketWorker(); // Ticket fulfillment worker
     startBillingCron();
 });

@@ -16,3 +16,8 @@ export const db = new Pool({
 db.connect()
     .then(() => console.log('📦 Successfully connected to PostgreSQL Database'))
     .catch((err) => console.error('❌ Database connection error:', err.stack));
+
+// Handle idle client errors to prevent process crashes
+db.on('error', (err, client) => {
+    console.error('❌ Unexpected error on idle database client', err);
+});

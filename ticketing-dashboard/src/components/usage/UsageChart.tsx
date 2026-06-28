@@ -9,38 +9,6 @@ import {
 } from 'recharts';
 import type { ChartDataPoint } from '../../hooks/useApiUsage';
 
-// ─── Test Data Helper ─────────────────────────────────────────────────────────
-
-/**
- * withTestData — Temporary UI helper for development.
- *
- * If historical days (indices 0–5) are all zero, populates them with random
- * integers between 20 and 300 so the chart looks alive during testing.
- * The last day (index 6 = Today) always uses real backend data.
- *
- * Remove this function once real traffic is flowing.
- */
-function withTestData(data: ChartDataPoint[]): ChartDataPoint[] {
-  if (data.length < 2) return data;
-
-  // Check if all historical days (everything except the last) are zero
-  const historicalDays = data.slice(0, -1);
-  const allZero = historicalDays.every((d) => d.requests === 0);
-
-  if (!allZero) return data; // Real data exists — use as-is
-
-  return data.map((point, idx) => {
-    // Last entry = Today → always use real data
-    if (idx === data.length - 1) return point;
-
-    // Historical days → fill with random test data
-    return {
-      ...point,
-      requests: Math.floor(Math.random() * (300 - 20 + 1)) + 20,
-    };
-  });
-}
-
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +32,7 @@ interface UsageChartProps {
 }
 
 export function UsageChart({ data }: UsageChartProps) {
-  const chartData = withTestData(data);
+  const chartData = data;
   const hasData = chartData.length > 0;
 
   return (

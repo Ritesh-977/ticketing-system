@@ -12,6 +12,7 @@ import {
   CheckCheck,
   Radio,
   ExternalLink,
+  Trash2,
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext.js';
 import api from '../../lib/axios.js';
@@ -102,6 +103,7 @@ export function WebhooksPage() {
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [revealedSecrets, setRevealedSecrets] = useState<Set<string>>(new Set());
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // ── Fetch Webhooks ────────────────────────────────────────────────────────
   const fetchWebhooks = useCallback(async () => {
@@ -208,6 +210,21 @@ export function WebhooksPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // ── Delete Webhook ────────────────────────────────────────────────────────
+  const handleDelete = async (id: string): Promise<void> => {
+    if (!window.confirm('Are you sure you want to delete this webhook?')) return;
+    try {
+      setDeletingId(id);
+      await api.delete(`/webhooks/${id}`);
+      setWebhooks((prev) => prev.filter((wh) => wh.id !== id));
+      pushToast('success', 'Webhook deleted');
+    } catch (err: unknown) {
+      pushToast('error', 'Failed to delete webhook');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   const hasWebhooks = webhooks && webhooks.length > 0;
@@ -293,20 +310,35 @@ export function WebhooksPage() {
                     </div>
                   </div>
 
-                  <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${
-                      wh.is_active
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : 'bg-slate-100 text-slate-500'
-                    }`}
-                  >
+                  <div className="flex items-center gap-3">
                     <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        wh.is_active ? 'bg-emerald-500' : 'bg-slate-400'
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${
+                        wh.is_active
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-slate-100 text-slate-500'
                       }`}
-                    />
-                    {wh.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          wh.is_active ? 'bg-emerald-500' : 'bg-slate-400'
+                        }`}
+                      />
+                      {wh.is_active ? 'Active' : 'Inactive'}
+                    </span>
+
+                    <button
+                      onClick={() => handleDelete(wh.id)}
+                      disabled={deletingId === wh.id}
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition disabled:opacity-50"
+                      title="Delete webhook"
+                    >
+                      {deletingId === wh.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Events Row */}
