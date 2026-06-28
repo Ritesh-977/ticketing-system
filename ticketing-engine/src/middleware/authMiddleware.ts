@@ -11,6 +11,11 @@ export const requireApiKey = async (req: Request, res: Response, next: NextFunct
 
         const apiKey = authHeader.split(' ')[1];
 
+        if (!apiKey) {
+            res.status(401).json({ error: 'Unauthorized: Missing API key' });
+            return;
+        }
+
         // Basic validation of key format
         if (!apiKey.startsWith('sk_live_') && !apiKey.startsWith('sk_test_')) {
             res.status(401).json({ error: 'Unauthorized: Invalid API key format' });
