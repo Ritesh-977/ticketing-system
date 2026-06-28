@@ -35,7 +35,7 @@ const httpServer = http.createServer(app);
 
 // Security and Parsing Middleware
 app.use(helmet()); // Secures HTTP headers
-const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',').map(o => o.trim()) : ['http://localhost:5173'];
+const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',').map(o => o.trim()) : ['https://ticketing-system-virid.vercel.app', 'http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
