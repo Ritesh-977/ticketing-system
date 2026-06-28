@@ -1,4 +1,4 @@
-import { ArrowUpRight, ArrowDownRight, Activity, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
